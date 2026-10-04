@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.myproject.mapper.SeckillActivityMapper">
+
+    <!-- TODO: 秒杀活动相关自定义SQL -->
+    <!-- 示例: 乐观锁扣减秒杀库存 -->
+    <!--
+    <update id="reduceSeckillStock">
+        UPDATE t_seckill_activity
+        SET available_stock = available_stock - 1
+        WHERE id = #{id} AND available_stock > 0 AND deleted = 0
+    </update>
+    -->
+
+</mapper>

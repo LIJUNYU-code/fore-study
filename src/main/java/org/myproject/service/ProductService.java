@@ -2,39 +2,60 @@ package org.myproject.service;
 
 import org.myproject.dto.ProductCreateDTO;
 import org.myproject.entity.Product;
+import org.myproject.vo.PageResult;
 import org.myproject.vo.ProductVO;
-
-import java.util.List;
 
 public interface ProductService {
 
-    // TODO: 创建商品
-    // - 校验分类是否存在
-    // - DTO转Entity并保存
+   /**
+    * 创建商品
+    * @param dto 商品创建DTO
+    * @return 创建的商品商品实体
+    */
     Product createProduct(ProductCreateDTO dto);
 
-    // TODO: 根据ID查询商品详情(返回VO, 包含分类名称)
+    /**
+    * 根据ID查询商品详情(返回VO, 包含分类名称)
+    * @param id 商品ID
+    * @return 商品详情VO
+    */
     ProductVO getProductById(Long id);
 
-    // TODO: 分页查询商品列表
-    // - 支持按分类ID筛选
-    // - 支持按名称模糊搜索
-    // - 支持按价格排序
-    // - 返回分页结果
-    List<ProductVO> listProducts(Long categoryId, String keyword, Integer page, Integer size);
+   /**
+    * 分页查询商品列表
+    * @param categoryId 分类ID(可选)
+    * @param keyword 名称模糊搜索(可选)
+    * @param page 页码(默认1)
+    * @param size 每页数量(默认10)
+    * @return 分页结果(包含records、total、page、size、pages)
+    */
+   PageResult<ProductVO> listProducts(Long categoryId, String keyword, Integer page, Integer size);
 
-    // TODO: 更新商品信息
+    /**
+    * 更新商品信息
+    * @param id 商品ID
+    * @param dto 商品更新DTO
+    */
     void updateProduct(Long id, ProductCreateDTO dto);
 
-    // TODO: 商品上下架
-    // - 切换status: 0-下架 1-上架
+    /**
+    * 商品上下架
+    * @param id 商品ID
+    */
     void toggleProductStatus(Long id);
 
-    // TODO: 扣减库存(用于下单)
-    // - 使用乐观锁或行锁防止超卖
-    // - 返回是否扣减成功
+    /**
+    * 扣减库存(用于下单)
+    * @param productId 商品ID
+    * @param quantity 扣减数量
+    * @return 是否扣减成功
+    */
     boolean reduceStock(Long productId, Integer quantity);
 
-    // TODO: 增加销量
+    /**
+    * 增加销量
+    * @param productId 商品ID
+    * @param quantity 增加数量
+    */
     void increaseSales(Long productId, Integer quantity);
 }

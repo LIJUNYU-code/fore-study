@@ -80,10 +80,16 @@ const passwordForm = reactive({ oldPassword: '', newPassword: '', confirmPasswor
 async function handleUpdateProfile() {
   try {
     const userId = userStore.userInfo?.id
+    if (!userId) {
+      ElMessage.error('用户信息加载失败，请重新登录')
+      return
+    }
     await userApi.updateUser(userId, profileForm)
     ElMessage.success('修改成功')
     await userStore.fetchUserInfo()
-  } catch {}
+  } catch (error) {
+    console.error('更新用户信息失败:', error)
+  }
 }
 
 async function handleChangePassword() {
@@ -93,6 +99,10 @@ async function handleChangePassword() {
   }
   try {
     const userId = userStore.userInfo?.id
+    if (!userId) {
+      ElMessage.error('用户信息加载失败，请重新登录')
+      return
+    }
     await userApi.changePassword(userId, {
       oldPassword: passwordForm.oldPassword,
       newPassword: passwordForm.newPassword
@@ -101,7 +111,9 @@ async function handleChangePassword() {
     passwordForm.oldPassword = ''
     passwordForm.newPassword = ''
     passwordForm.confirmPassword = ''
-  } catch {}
+  } catch (error) {
+    console.error('修改密码失败:', error)
+  }
 }
 
 onMounted(async () => {

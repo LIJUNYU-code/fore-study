@@ -40,4 +40,4 @@ logging:
 
 jwt:
   secret: abcdefghijklmnopqrstuvwxyz12345678
-  expire: 3600000
+  expire: 3600000000

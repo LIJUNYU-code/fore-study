@@ -13,6 +13,18 @@ export const useUserStore = defineStore('user', () => {
     const res = await userApi.login(loginForm)
     token.value = res.data
     localStorage.setItem('token', res.data)
+    
+    // 从token中解析userId并保存到localStorage
+    try {
+      const payload = JSON.parse(atob(res.data.split('.')[1]))
+      const userId = payload.userId || payload.sub
+      if (userId) {
+        localStorage.setItem('userId', userId)
+      }
+    } catch (e) {
+      console.warn('解析token失败:', e)
+    }
+    
     await fetchUserInfo()
   }
 

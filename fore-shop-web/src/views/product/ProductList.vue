@@ -73,8 +73,10 @@ async function loadData() {
       page: page.value,
       size: size.value
     })
-    products.value = res.data || []
-    total.value = res.data?.length || 0
+    // 后端返回的是分页对象：{ records: [], total: xxx, page: x, size: x, pages: x }
+    const pageData = res.data || {}
+    products.value = pageData.records || []
+    total.value = pageData.total || 0
   } finally {
     loading.value = false
   }

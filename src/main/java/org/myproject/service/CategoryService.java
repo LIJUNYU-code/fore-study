@@ -1,5 +1,6 @@
 package org.myproject.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.myproject.entity.Category;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface CategoryService {
     // - 校验该分类下是否有商品
     // - 如有商品则不允许删除
     void deleteCategory(Long id);
+
+    Category getCategoryById(@NotNull(message = "分类ID不能为空") Long categoryId);
 }

@@ -50,4 +50,9 @@ public class CategoryServiceImpl implements CategoryService {
         // 3. 调用categoryMapper.deleteById() (逻辑删除)
         throw new UnsupportedOperationException("TODO: 请实现删除分类");
     }
+
+    @Override
+    public Category getCategoryById(Long categoryId) {
+        return categoryMapper.selectById(categoryId);
+    }
 }

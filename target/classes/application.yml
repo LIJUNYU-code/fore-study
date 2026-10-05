@@ -34,6 +34,9 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+upload:
+  path: D:/software/fore-study/uploads/
+
 logging:
   level:
     org.myproject.mapper: debug

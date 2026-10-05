@@ -36,6 +36,7 @@ public class ProductController {
         return ResultVO.success(product);
     }
 
+
     @GetMapping("/{id}")
     public ResultVO<ProductVO> getProductById(@PathVariable Long id) {
         ProductVO productVO = productService.getProductById(id);

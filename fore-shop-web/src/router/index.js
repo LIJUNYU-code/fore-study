@@ -25,6 +25,12 @@ const routes = [
         meta: { title: '商品列表' }
       },
       {
+        path: 'category',
+        name: 'CategoryList',
+        component: () => import('../views/category/CategoryList.vue'),
+        meta: { title: '分类管理' }
+      },
+      {
         path: 'product/:id',
         name: 'ProductDetail',
         component: () => import('../views/product/ProductDetail.vue'),

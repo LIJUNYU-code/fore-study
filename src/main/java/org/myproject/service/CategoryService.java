@@ -7,18 +7,28 @@ import java.util.List;
 
 public interface CategoryService {
 
-    // TODO: 创建分类
+
+    /**
+     * 创建分类
+     * @param category 分类实体
+     * @return 创建后的分类实体
+     */
     Category createCategory(Category category);
 
-    // TODO: 查询所有分类(树形结构)
-    // - 查询所有分类
-    // - 组装父子关系返回树形结构
+    /**
+     * 查询所有分类树形结构
+     * @return 分类树形结构列表
+     */
     List<Category> listCategoryTree();
 
-    // TODO: 更新分类
+    /**
+     * 更新分类
+     * @param id 分类ID
+     * @param category 更新后的分类实体
+     */
     void updateCategory(Long id, Category category);
 
-    // TODO: 删除分类
+
     // - 校验该分类下是否有商品
     // - 如有商品则不允许删除
     void deleteCategory(Long id);

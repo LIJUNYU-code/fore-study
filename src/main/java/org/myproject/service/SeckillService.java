@@ -14,10 +14,10 @@ public interface SeckillService {
     */
     List<SeckillActivityVO> listSeckillActivities();
 
-    // TODO: 查询秒杀活动详情
+
     SeckillActivityVO getSeckillActivityById(Long id);
 
-    // TODO: 执行秒杀(核心逻辑)
+
     // 步骤1: 校验活动是否存在
     // 步骤2: 校验活动是否在进行中(时间+状态)
     // 步骤3: 校验用户是否已参与(防止重复秒杀)
@@ -28,12 +28,12 @@ public interface SeckillService {
     // 注意: 实际的库存扣减和订单创建在消费者中完成
     Long executeSeckill(Long userId, Long seckillActivityId);
 
-    // TODO: 秒杀结果轮询
+
     // - 在Redis中查询秒杀结果
     // - 返回: 排队中 / 秒杀成功(订单ID) / 秒杀失败
     Long getSeckillResult(Long userId, Long seckillActivityId);
 
-    // TODO: 秒杀订单实际处理(消费者调用)
+
     // - 再次校验库存(Redis)
     // - 扣减数据库库存(使用乐观锁 UPDATE ... WHERE available_stock > 0)
     // - 创建订单
@@ -41,7 +41,6 @@ public interface SeckillService {
     // - 将结果写入Redis
     void processSeckillOrder(Long userId, Long seckillActivityId);
 
-    // TODO: 活动状态定时刷新
     // - 扫描所有活动
     // - 根据当前时间更新活动状态(未开始→进行中→已结束)
     // - 活动开始时将库存预热到Redis

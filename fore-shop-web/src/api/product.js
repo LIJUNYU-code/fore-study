@@ -5,7 +5,8 @@ export const productApi = {
   getById: (id) => request.get(`/product/${id}`),
   list: (params) => request.get('/product/list', { params }),
   update: (id, data) => request.put(`/product/${id}`, data),
-  toggleStatus: (id) => request.put(`/product/${id}/status`)
+  toggleStatus: (id) => request.put(`/product/${id}/status`),
+  deleteProduct: (id) => request.delete(`/product/${id}`)
 }
 
 export const categoryApi = {

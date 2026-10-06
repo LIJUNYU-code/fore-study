@@ -1,12 +1,18 @@
 package org.myproject.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderVO {
 
     private Long id;
@@ -29,7 +35,10 @@ public class OrderVO {
 
     private List<OrderItemVO> orderItems;
 
+    @Builder
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class OrderItemVO {
 
         private Long id;

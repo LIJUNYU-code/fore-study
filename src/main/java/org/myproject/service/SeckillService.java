@@ -6,9 +6,12 @@ import java.util.List;
 
 public interface SeckillService {
 
-    // TODO: 查询秒杀活动列表
-    // - 查询所有秒杀活动
-    // - 转换为VO(包含商品名称、图片、原价)
+
+   /**
+    * 查询秒杀活动列表
+    * - 查询所有秒杀活动
+    * - 转换为VO(包含商品名称、图片、原价)
+    */
     List<SeckillActivityVO> listSeckillActivities();
 
     // TODO: 查询秒杀活动详情

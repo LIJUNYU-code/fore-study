@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.myproject.dto.ProductCreateDTO;
+import org.myproject.entity.Cart;
 import org.myproject.entity.Category;
 import org.myproject.entity.Product;
 import org.myproject.mapper.ProductMapper;
@@ -29,7 +30,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(ProductCreateDTO dto) {
-        // TODO: 实现创建商品
         // 1. 校验分类是否存在
         Category category = categoryService.getCategoryById(dto.getCategoryId());
         if(category == null){
@@ -156,9 +156,25 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("商品不存在");
         }
         // 2. 切换状态: 0→1 或 1→0
-        product.setStatus(product.getStatus() == 0 ? 1 : 0);
+        product.setStatus(product.getStatus() == 1 ? 0 : 1);
         productMapper.updateById(product);
 
+    }
+
+    /**
+     * 删除商品（物理删除）
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteProduct(Long id) {
+        // 1. 校验商品是否存在
+        Product product = productMapper.selectById(id);
+        if (product == null) {
+            throw new IllegalArgumentException("商品不存在");
+        }
+
+        // 2. 物理删除商品
+        productMapper.deleteById(id);
     }
 
     /**
@@ -204,5 +220,13 @@ public class ProductServiceImpl implements ProductService {
         if (rows == 0) {
             throw new IllegalArgumentException("商品不存在");
         }
+    }
+    /**
+     * 根据购物车项查询商品列表
+     */
+
+    @Override
+    public List<Product> getProductsByCartItems(List<Cart> cartItems) {
+        return productMapper.selectBatchIds(cartItems.stream().map(Cart::getProductId).toList());
     }
 }

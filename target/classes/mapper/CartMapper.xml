@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.myproject.mapper.CartMapper">
+    <update id="updateBatchById">
+        UPDATE t_cart SET product_count = #{productCount} WHERE id IN (#{idList})
+    </update>
+    <select id="selectByUserIdAndProductId" resultType="org.myproject.entity.Cart">
+        SELECT * FROM t_cart WHERE user_id = #{userId} AND product_id = #{productId}
+    </select>
 </mapper>

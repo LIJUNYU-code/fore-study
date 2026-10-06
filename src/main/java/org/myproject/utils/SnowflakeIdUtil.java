@@ -27,9 +27,32 @@ public class SnowflakeIdUtil {
     private static final long START_TIMESTAMP = 1735689600000L;
     private static final long DATACENTER_ID = 1L;
     private static final long WORKER_ID = 1L;
+    private static long sequence = 0L;
+    private static long lastTimestamp = -1L;
+    private static long maxSequence = 0xFFF;
+
+    private static long getNextMillisecond(long lastTimestamp) {
+        while (System.currentTimeMillis() <= lastTimestamp) {
+        }
+        return System.currentTimeMillis();
+    }
 
     public static synchronized long nextId() {
         // TODO: 实现雪花算法
-        throw new UnsupportedOperationException("TODO: 请实现雪花算法ID生成器");
+        long timestamp = System.currentTimeMillis();
+        if (timestamp < lastTimestamp) {
+            throw new RuntimeException("Clock moved backwards. Refusing to generate id for " + (lastTimestamp - timestamp) + " milliseconds");
+        }
+        if (timestamp == lastTimestamp) {
+            sequence = (sequence + 1) & 0xFFF;
+            if (sequence == 0) {
+                timestamp = getNextMillisecond(lastTimestamp);
+            }
+        } else {
+            sequence = 0;
+        }
+        lastTimestamp = timestamp;
+        return ((timestamp - START_TIMESTAMP) << 22) | (DATACENTER_ID << 17) | (WORKER_ID << 12) | sequence;
     }
+
 }

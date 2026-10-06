@@ -50,8 +50,11 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center">
+        <el-table-column label="操作" width="320" fixed="right" align="center">
           <template #default="{ row }">
+            <el-button type="success" link @click="handleAddToCart(row)" v-if="row.status === 1">
+              加入购物车
+            </el-button>
             <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
             <el-button type="warning" link @click="handleToggleStatus(row)">
               {{ row.status === 1 ? '下架' : '上架' }}
@@ -160,13 +163,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { productApi, categoryApi } from '../../api/product'
+import { cartApi } from '../../api/cart'
 import { Search, Plus, Picture } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import ImageUpload from '../../components/ImageUpload.vue'
 
 const route = useRoute()
+const router = useRouter()
 const loading = ref(false)
 const submitLoading = ref(false)
 const products = ref([])
@@ -302,24 +307,34 @@ async function handleSubmit() {
 
 async function handleToggleStatus(row) {
   try {
-    const newStatus = row.status === 1 ? 0 : 1
-    await productApi.update(row.id, { ...row, status: newStatus })
-    ElMessage.success(newStatus === 1 ? '上架成功' : '下架成功')
+    await productApi.toggleStatus(row.id)
+    const newStatus = row.status === 1 ? '下架' : '上架'
+    ElMessage.success(`${newStatus}成功`)
     loadData()
   } catch (error) {
     console.error('操作失败:', error)
-    ElMessage.error('操作失败')
+    ElMessage.error(error.response?.data?.message || '操作失败')
   }
 }
 
 async function handleDelete(id) {
   try {
-    await productApi.toggleStatus(id)
+    await productApi.deleteProduct(id)
     ElMessage.success('删除成功')
     loadData()
   } catch (error) {
     console.error('删除失败:', error)
     ElMessage.error(error.response?.data?.message || '删除失败')
+  }
+}
+
+async function handleAddToCart(product) {
+  try {
+    await cartApi.add(product.id, 1)
+    ElMessage.success(`"${product.name}" 已加入购物车`)
+  } catch (error) {
+    console.error('加入购物车失败:', error)
+    ElMessage.error(error.response?.data?.message || '加入购物车失败')
   }
 }
 

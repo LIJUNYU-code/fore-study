@@ -30,7 +30,7 @@
             <el-button type="primary" size="large" :icon="ShoppingCart" @click="handleAddCart" style="margin-left: 16px">
               加入购物车
             </el-button>
-            <el-button type="danger" size="large" @click="handleBuyNow">
+            <el-button type="danger" size="large" :loading="submitting" @click="handleBuyNow">
               立即购买
             </el-button>
           </div>
@@ -45,12 +45,14 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productApi } from '../../api/product'
 import { cartApi } from '../../api/cart'
+import { orderApi } from '../../api/order'
 import { ShoppingCart } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
+const submitting = ref(false)
 const product = ref(null)
 const quantity = ref(1)
 
@@ -67,12 +69,41 @@ async function loadProduct() {
 async function handleAddCart() {
   try {
     await cartApi.add(product.value.id, quantity.value)
-    ElMessage.success('已加入购物车')
-  } catch {}
+    ElMessage.success(`已添加 ${quantity.value} 件商品到购物车`)
+  } catch (error) {
+    ElMessage.error('加入购物车失败')
+  }
 }
 
-function handleBuyNow() {
-  ElMessage.info('请先加入购物车，再从购物车结算')
+async function handleBuyNow() {
+  try {
+    submitting.value = true
+
+    const res = await cartApi.add(product.value.id, quantity.value)
+    const cartItemId = res.data
+
+    ElMessageBox.confirm(
+      `确定购买 ${quantity.value} 件 "${product.value.name}"？`,
+      '确认购买',
+      { confirmButtonText: '立即下单', cancelButtonText: '再想想', type: 'info' }
+    ).then(async () => {
+      try {
+        const orderRes = await orderApi.create({ cartItemIds: [cartItemId] })
+        ElMessage.success('下单成功！')
+
+        router.push({
+          path: `/order/${orderRes.data.id}`,
+          query: { newOrder: 'true' }
+        })
+      }).catch(() => {})
+    }).catch(() => {})
+
+  } catch (error) {
+    console.error('购买失败:', error)
+    ElMessage.error(error.response?.data?.message || '操作失败')
+  } finally {
+    submitting.value = false
+  }
 }
 
 onMounted(() => loadProduct())

@@ -17,33 +17,27 @@ public class SeckillController {
 
     @GetMapping("/list")
     public ResultVO<List<SeckillActivityVO>> listSeckillActivities() {
-        // TODO: 调用seckillService.listSeckillActivities()
-        // 返回 ResultVO.success(activityVOList)
-        throw new UnsupportedOperationException("TODO");
+        List<SeckillActivityVO> activityVOList = seckillService.listSeckillActivities();
+        return ResultVO.success(activityVOList);
     }
 
     @GetMapping("/{id}")
     public ResultVO<SeckillActivityVO> getSeckillActivityById(@PathVariable Long id) {
-        // TODO: 调用seckillService.getSeckillActivityById(id)
-        // 返回 ResultVO.success(activityVO)
-        throw new UnsupportedOperationException("TODO");
+        SeckillActivityVO activityVO = seckillService.getSeckillActivityById(id);
+        return ResultVO.success(activityVO);
     }
 
     @PostMapping("/execute")
     public ResultVO<Long> executeSeckill(@RequestHeader("X-User-Id") Long userId,
                                          @RequestParam Long seckillActivityId) {
-        // TODO: 调用seckillService.executeSeckill(userId, seckillActivityId)
-        // 返回 ResultVO.success(resultId)
-        // resultId含义: -1=排队中, >0=订单ID(秒杀成功), 0=秒杀失败
-        throw new UnsupportedOperationException("TODO");
+        Long result = seckillService.executeSeckill(userId, seckillActivityId);
+        return ResultVO.success(result);
     }
 
     @GetMapping("/result")
     public ResultVO<Long> getSeckillResult(@RequestHeader("X-User-Id") Long userId,
                                            @RequestParam Long seckillActivityId) {
-        // TODO: 调用seckillService.getSeckillResult(userId, seckillActivityId)
-        // 返回 ResultVO.success(result)
-        // result含义: 0=排队中, >0=订单ID(秒杀成功), -1=秒杀失败
-        throw new UnsupportedOperationException("TODO");
+        Long result = seckillService.getSeckillResult(userId, seckillActivityId);
+        return ResultVO.success(result);
     }
 }

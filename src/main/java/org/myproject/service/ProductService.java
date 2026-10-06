@@ -1,9 +1,12 @@
 package org.myproject.service;
 
 import org.myproject.dto.ProductCreateDTO;
+import org.myproject.entity.Cart;
 import org.myproject.entity.Product;
 import org.myproject.vo.PageResult;
 import org.myproject.vo.ProductVO;
+
+import java.util.List;
 
 public interface ProductService {
 
@@ -45,6 +48,12 @@ public interface ProductService {
     void toggleProductStatus(Long id);
 
     /**
+    * 删除商品
+    * @param id 商品ID
+    */
+    void deleteProduct(Long id);
+
+    /**
     * 扣减库存(用于下单)
     * @param productId 商品ID
     * @param quantity 扣减数量
@@ -58,4 +67,10 @@ public interface ProductService {
     * @param quantity 增加数量
     */
     void increaseSales(Long productId, Integer quantity);
+    /**
+    * 根据购物车项查询商品列表
+    * @param cartItems 购物车项列表
+    * @return 商品列表
+    */
+    List<Product> getProductsByCartItems(List<Cart> cartItems);
 }

@@ -8,6 +8,7 @@ import org.myproject.service.ProductService;
 import org.myproject.vo.PageResult;
 import org.myproject.vo.ProductVO;
 import org.myproject.vo.ResultVO;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +67,12 @@ public class ProductController {
     public ResultVO<Void> toggleStatus(@PathVariable Long id) {
         // 返回 ResultVO.success()
         productService.toggleProductStatus(id);
+        return ResultVO.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResultVO<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
         return ResultVO.success();
     }
 }

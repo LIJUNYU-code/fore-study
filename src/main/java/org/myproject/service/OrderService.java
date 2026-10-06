@@ -1,39 +1,49 @@
 package org.myproject.service;
 
 import org.myproject.dto.OrderCreateDTO;
-import org.myproject.entity.Cart;
 import org.myproject.vo.OrderVO;
 
 import java.util.List;
 
 public interface OrderService {
 
-    // TODO: 创建订单(从购物车结算)
-    // - 查询选中的购物车项
-    // - 校验商品库存是否充足
-    // - 扣减商品库存
-    // - 生成订单编号(雪花算法)
-    // - 计算订单总金额
-    // - 创建订单主表和订单项
-    // - 清除已结算的购物车项
-    // - 返回订单信息
+
+    /**
+     * 创建订单(从购物车结算)
+     * @param userId 用户ID
+     * @param dto 订单创建DTO
+     * @return 订单VO
+     */
     OrderVO createOrder(Long userId, OrderCreateDTO dto);
 
-    // TODO: 根据订单ID查询订单详情(包含订单项)
+    /**
+     * 根据订单ID查询订单详情(包含订单项)
+     * @param id 订单ID
+     * @return 订单VO
+     */
     OrderVO getOrderById(Long id);
 
-    // TODO: 查询用户的订单列表(分页)
-    List<OrderVO> listUserOrders(Long userId, Integer status, Integer page, Integer size);
+    /**
+     * 查询用户的订单列表(分页)
+     * @param userId 用户ID
+     * @param status 订单状态(可选)
+     * @param page 页码(默认1)
+     * @param size 每页数量(
+     *            * @return     * @return 订单VO列表
+     */
+       List<OrderVO> listUserOrders(Long userId, Integer status, Integer page, Integer size);
 
-    // TODO: 取消订单
-    // - 校验订单状态是否为待支付
-    // - 更新订单状态为已取消
-    // - 恢复商品库存
+       /**
+        * 取消订单
+        * @param userId 用户ID
+        * @param orderId 订单ID
+        */
     void cancelOrder(Long userId, Long orderId);
 
-    // TODO: 支付订单(模拟)
-    // - 校验订单状态是否为待支付
-    // - 更新订单状态为已支付
-    // - 记录支付时间
+    /**
+     * 支付订单(模拟)
+     * @param userId 用户ID
+     * @param orderId 订单ID
+     */
     void payOrder(Long userId, Long orderId);
 }

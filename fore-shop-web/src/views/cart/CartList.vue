@@ -8,20 +8,26 @@
         </div>
       </template>
 
-      <el-table :data="cartList" v-loading="loading" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" />
+      <el-table :data="cartList" v-loading="loading" @selection-change="handleSelectionChange" row-key="id">
+        <el-table-column type="selection" width="55" :reserve-selection="true" />
         <el-table-column label="商品信息" min-width="300">
           <template #default="{ row }">
             <div class="cart-product">
               <div class="cart-img">
-                <el-icon :size="32" color="#c0c4cc"><Picture /></el-icon>
+                <img v-if="row.productImage" :src="row.productImage" alt="" />
+                <el-icon v-else :size="32" color="#c0c4cc"><Picture /></el-icon>
               </div>
-              <span>商品ID: {{ row.productId }}</span>
+              <div class="product-info">
+                <span class="product-name">{{ row.productName || '未知商品' }}</span>
+                <span class="product-id">商品ID: {{ row.productId }}</span>
+              </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="单价" width="120" align="center">
-          <template #default>¥--</template>
+          <template #default="{ row }">
+            <span class="price">¥{{ row.price ? row.price.toFixed(2) : '0.00' }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="数量" width="180" align="center">
           <template #default="{ row }">
@@ -29,7 +35,9 @@
           </template>
         </el-table-column>
         <el-table-column label="小计" width="120" align="center">
-          <template #default>¥--</template>
+          <template #default="{ row }">
+            <span class="subtotal">¥{{ (row.price && row.quantity) ? (row.price * row.quantity).toFixed(2) : '0.00' }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="100" align="center">
           <template #default="{ row }">
@@ -46,8 +54,8 @@
         </div>
         <div class="footer-right">
           <span class="total-label">合计：</span>
-          <span class="total-price">¥--</span>
-          <el-button type="danger" size="large" :disabled="!selectedItems.length" @click="handleCheckout">
+          <span class="total-price">¥{{ totalPrice }}</span>
+          <el-button type="danger" size="large" :disabled="!selectedItems.length || submitting" :loading="submitting" @click="handleCheckout">
             结算 ({{ selectedItems.length }})
           </el-button>
         </div>
@@ -57,17 +65,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { cartApi } from '../../api/cart'
+import { orderApi } from '../../api/order'
 import { Delete } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 const loading = ref(false)
+const submitting = ref(false)
 const cartList = ref([])
 const selectedItems = ref([])
 const allSelected = ref(false)
+
+const totalPrice = computed(() => {
+  return selectedItems.value.reduce((sum, item) => {
+    return sum + (item.price || 0) * item.quantity
+  }, 0).toFixed(2)
+})
 
 async function loadData() {
   loading.value = true
@@ -111,10 +127,48 @@ async function handleClear() {
 
 function handleSelectAll(val) {
   allSelected.value = val
+  const table = document.querySelector('.el-table__body-wrapper .el-table__body')
+  if (table) {
+    const rows = table.querySelectorAll('.el-table__row')
+    rows.forEach((row, index) => {
+      const checkbox = row.querySelector('.el-checkbox__input')
+      if (checkbox) {
+        checkbox.click()
+      }
+    })
+  }
 }
 
-function handleCheckout() {
-  ElMessage.info('结算功能待后端实现')
+async function handleCheckout() {
+  if (!selectedItems.value.length) {
+    ElMessage.warning('请选择要结算的商品')
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      `确定要结算 ${selectedItems.value.length} 件商品吗？`,
+      '确认下单',
+      { type: 'info' }
+    )
+
+    submitting.value = true
+    const cartItemIds = selectedItems.value.map(item => item.id)
+    const res = await orderApi.create({ cartItemIds })
+
+    ElMessage.success('下单成功！')
+
+    router.push({
+      path: `/order/${res.data.id}`,
+      query: { newOrder: 'true' }
+    })
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error(error.response?.data?.message || '下单失败，请重试')
+    }
+  } finally {
+    submitting.value = false
+  }
 }
 
 onMounted(() => loadData())
@@ -143,6 +197,40 @@ onMounted(() => loadData())
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.cart-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-name {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.product-id {
+  color: #999;
+  font-size: 12px;
+}
+
+.price {
+  color: #333;
+  font-weight: 500;
+}
+
+.subtotal {
+  color: #f56c6c;
+  font-weight: 600;
 }
 
 .cart-footer {
